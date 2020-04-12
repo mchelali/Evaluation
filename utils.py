@@ -1,8 +1,10 @@
 from sklearn.metrics import confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
-def plot_confusion_matrix(cm, classes, cmap=plt.cm.Blues):
+
+def plot_confusion_matrix(cm, classes, savepath, cmap=plt.cm.Blues):
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
@@ -20,6 +22,10 @@ def plot_confusion_matrix(cm, classes, cmap=plt.cm.Blues):
     #plt.rcParams.update({'font.size': 12})
     plt.rcParams['xtick.bottom'] = plt.rcParams['xtick.labelbottom'] = False
     plt.rcParams['xtick.top'] = plt.rcParams['xtick.labeltop'] = True
+
+    # normalization de la matrice
+    for i in range(cm.shape[0]):
+        cm[i, :] = cm[i, :]/np.sum(cm[i, :])
 
     fig, ax = plt.subplots()
     im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
@@ -46,8 +52,7 @@ def plot_confusion_matrix(cm, classes, cmap=plt.cm.Blues):
                     color="white" if cm[i, j] > thresh else "black")
     fig.tight_layout()
 
-
-    return ax
+    fig.savefig(path_res + "Poly" + str(polyID) + ".png", bbox_inches='tight', pad_inches=0)
 
 if __name__ == "__main__":
     class_names = ["Meadow","vines", "Trad. \nOrchards", "Inten.\norchard"]
@@ -57,9 +62,9 @@ if __name__ == "__main__":
                [1, 0, 26, 4],
                [1, 9, 6, 50]], dtype=float)
 
-    # normalization de la matrice
-    for i in range(cm.shape[0]):
-        cm[i, :] = cm[i, :]/np.sum(cm[i, :])
+    
 
-    plot_confusion_matrix(cm, class_names, cmap=plt.cm.YlGn)
+    colors = ["white", "yellow", "lightseagreen"]
+    cmap1 = LinearSegmentedColormap.from_list("mycmap", colors)
+    plot_confusion_matrix(cm, class_names, cmap=cmap1)
     plt.show()
